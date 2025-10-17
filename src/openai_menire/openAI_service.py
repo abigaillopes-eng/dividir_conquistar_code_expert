@@ -1,23 +1,21 @@
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
 import os
+from langchain_openai import ChatOpenAI
 
-class AnthropicService:
-
-    def chamar_claude_sonnet_4():
+class OpenAIService():
+    # \\TODO: Implementar corretamente, usando a chave da OpenAI
+    def chamar_gpt_3():
         
         load_dotenv()
 
-        # Verificando se a chave foi carregada
-        if not os.getenv("ANTHROPIC_API_KEY"):
-            print("ERRO: A chave ANTHROPIC_API_KEY não foi encontrada. Verifique seu arquivo .env.")
+        if not os.getenv("OPENAI_API_KEY"):
+            print("ERRO: A variável de ambiente OPENAI_API_KEY não está configurada.")
             print("Por favor, verifique seu arquivo .env.")
             exit()
         else:
-            # Configurando o Modelo
-            llm = ChatAnthropic(model="claude-sonnet-4-20250514")
 
-            # Definindo o Prompt
+            llm = ChatOpenAI(model="gemini-2.5-flash")
+
             # Para definir a Persona e as Regras de Conduta
             INSTRUCAO_SISTEMA_CODIGO = """
             Você é um Engenheiro de Software Sênior e um assistente especializado em **somente** gerar código-fonte, scripts e exemplos de programação.
@@ -56,20 +54,20 @@ class AnthropicService:
             # Teste de Guardrail
             mensagem_invalida = [
                 ("system", INSTRUCAO_SISTEMA_CODIGO),
-                ("user", "Me conte uma piada divertida")
+                ("user", "Quantos anos tem o Michael Jackson?")
             ]
 
-            try:
-                # ai_msg = llm.invoke(mensagem_invalida)
-                ai_msg = llm.invoke(mensagem_valida)
-                
-                print("\n--- Resposta do Claude  ---")
-                print(ai_msg.content)
-                print("--------------------------")
-                
-            except Exception as e:
-                print(f"\nOcorreu um erro ao chamar o Claude : {e}")
+        try:
+            #ai_msg = llm.invoke(messages_para_llm)
+            ai_msg = llm.invoke(mensagem_invalida)
+
+            print(f"\n--- Resposta do GPT  ---")
+            print("\n" + ai_msg.content)
+            print("\n--------------------------")
+            
+        except Exception as e:
+            print(f"\nOcorreu um erro na chamada do GPT: {e}")
 
 
 if __name__ == "__main__":
-    AnthropicService.chamar_claude_sonnet_4()
+    OpenAIService.chamar_gpt_3()

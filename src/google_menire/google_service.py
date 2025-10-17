@@ -1,20 +1,21 @@
 from dotenv import load_dotenv
 import os
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+from src.errors.validacao_langchain import ErroDeValidacaoLangchain
 
-class OpenAIService():
+class GoogleService():
 
-    def chamar_gpt_3():
+    def chamar_gemini_2_5 (prompt: str):
         
         load_dotenv()
 
-        if not os.getenv("OPENAI_API_KEY"):
-            print("ERRO: A variável de ambiente OPENAI_API_KEY não está configurada.")
+        if not os.getenv("GOOGLE_API_KEY"):
+            print("ERRO: A variável de ambiente GOOGLE_API_KEY não está configurada.")
             print("Por favor, verifique seu arquivo .env.")
             exit()
         else:
 
-            llm = ChatOpenAI(model="gemini-2.5-flash")
+            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
             # Para definir a Persona e as Regras de Conduta
             INSTRUCAO_SISTEMA_CODIGO = """
@@ -46,28 +47,33 @@ class OpenAIService():
             """
 
             # Formato LangChain Padronizado (Tuplas de role, content)
+            # Exemplo de mensagem_valida
+            # \\TODO: tirar isso daqui
             mensagem_valida = [
                 ("system", INSTRUCAO_SISTEMA_CODIGO),
                 ("user", TAREFA_ESPECIFICA)
             ]
 
-            # Teste de Guardrail
-            mensagem_invalida = [
-                ("system", INSTRUCAO_SISTEMA_CODIGO),
-                ("user", "Quantos anos tem o Michael Jackson?")
-            ]
-
         try:
-            #ai_msg = llm.invoke(messages_para_llm)
-            ai_msg = llm.invoke(mensagem_invalida)
+            if prompt is not None:
+                prompt = str(prompt)
+                
+                mensagem_para_modelo = [
+                    ("system", INSTRUCAO_SISTEMA_CODIGO),
+                    ("user", prompt)
+                ]
+                
+                #ai_msg = llm.invoke(messages_para_llm)
+                ai_msg = llm.invoke(mensagem_para_modelo)
 
-            print(f"\n--- Resposta do GPT  ---")
-            print("\n" + ai_msg.content)
-            print("\n--------------------------")
+                print(f"\n--- Resposta do Gemini  ---")
+                print("\n" + ai_msg.content)
+                print("\n--------------------------")
+                return ai_msg.content
             
         except Exception as e:
-            print(f"\nOcorreu um erro na chamada do GPT: {e}")
-
+            print(f"\nOcorreu algum erro na chamada do Gemini: {e}")
+            raise ErroDeValidacaoLangchain (e)
 
 if __name__ == "__main__":
-    OpenAIService.chamar_gpt_3()
+    GoogleService
