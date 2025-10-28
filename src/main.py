@@ -25,9 +25,10 @@ class Menire:
                     case 2:
                         # Google
                         GoogleService.chamar_gemini_2_5(pergunta)
+                        # GoogleService.chamar_gemma_7b_it(pergunta)
                     case 3:
                         # OpenAI
-                        print("Desculpe, mas ainda estamos em obra para chamar essa API...")
+                        print("Desculpe, mas ainda estamos em obras para chamar essa API...")
                         # OpenAIService.chamar_gpt_3()
                     case _:
                         print("A opção inserida é inválida. Digite um número inteiro entre 1 e 3.")
